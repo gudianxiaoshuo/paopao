@@ -67,10 +67,10 @@ CMyPaopaoDlg::CMyPaopaoDlg(CWnd* pParent /*=NULL*/)
 		// NOTE: the ClassWizard will add member initialization here
 	//}}AFX_DATA_INIT
 	// Note that LoadIcon does not require a subsequent DestroyIcon in Win32
-	nSportStyle=0;
-	nDrawStyle = 0;
+	nSportStyle = Crash_Sort;
+	nDrawStyle = 3;
 	bTransparent = TRUE;
-
+	bTranBg = FALSE;
 
 	m_nCount=0;
 	m_hIcon = AfxGetApp()->LoadIcon(IDR_MAINFRAME);
@@ -106,6 +106,9 @@ BEGIN_MESSAGE_MAP(CMyPaopaoDlg, CDialog)
 	ON_COMMAND(ID_HUANRAO_SPORT, &CMyPaopaoDlg::OnHuanraoSport)
 	ON_COMMAND(ID_ARC_SPORT, &CMyPaopaoDlg::OnArcSport)
 	ON_COMMAND(ID_RAND_CRASH_SPORT, &CMyPaopaoDlg::OnRandCrashSport)
+	ON_COMMAND(ID_SHOWPNG, &CMyPaopaoDlg::OnShowpng)
+	ON_COMMAND(ID_TRANSBG, &CMyPaopaoDlg::OnTransbg)
+	
 END_MESSAGE_MAP()
 
 /////////////////////////////////////////////////////////////////////////////
@@ -140,9 +143,14 @@ BOOL CMyPaopaoDlg::OnInitDialog()
 	
 	SetWindowPos(&wndTopMost,0,0,::GetSystemMetrics(SM_CXSCREEN),::GetSystemMetrics(SM_CYSCREEN),SWP_SHOWWINDOW);
 	// TODO: Add extra initialization here
-	
+
+	//LONG t = GetWindowLong(m_hWnd, GWL_EXSTYLE);
+	//t |= WS_EX_LAYERED;
+	//SetWindowLong(m_hWnd, GWL_EXSTYLE, t);
+	//SetDlgTransparent(m_hWnd, RGB(0, 0, 0));
+
 	CreateBmpAndDC();
-	AddRandPaopao(10);
+	AddRandPaopao(15);
 	SetTimer(1,200,NULL);
 	return TRUE;  // return TRUE  unless you set the focus to a control
 }
@@ -194,28 +202,28 @@ void CMyPaopaoDlg::OnPaint()
 		CRect rc;
 		GetClientRect(rc);
 
-		//dcMem.FillSolidRect(&rc,RGB(0,0,0));
-		dcMem.FillSolidRect(&rc,RGB(18,18,18));
+		dcMem.FillSolidRect(&rc,RGB(0,0,0));
+	//	dcMem.FillSolidRect(&rc,RGB(18,18,18));
 
 		for(int nCount=0;nCount<m_nCount;nCount++)
 		{      
 			switch(nSportStyle){
-			case 0:
+			case Rand_Sport:
 				//随机
 				 paopao[nCount].Run(rc);
 				break;
 
-			case 1:
+			case Circle_Sport:
 				//圆形
 				paopao[nCount].RunCircle(rc);
 				break;
 
-			case 2:
+			case Arc_Sort:
 				//弧度
 				paopao[nCount].RunSin(rc, 45.0 / 180 * PAI, PAI);
 				break;
 
-			case 3:
+			case Crash_Sort:
 				//碰撞
 				
 				for(int nOrther=0;nOrther<m_nCount;nOrther++)
@@ -235,7 +243,11 @@ void CMyPaopaoDlg::OnPaint()
 
 			}
            
-			
+			//背景为空的的保证第一个图像 不是透明的 否则，很难点击退出
+			if (bTranBg&&nCount == 0)
+			{
+				paopao[nCount].Draw(dcMem, nDrawStyle, FALSE);
+			}
 			paopao[nCount].Draw(dcMem, nDrawStyle, bTransparent);
 		}
 
@@ -276,6 +288,9 @@ void CMyPaopaoDlg::AddRandPaopao(int nNumOfPaopao){
 
 			CPaopao newPaopao(xPos,yPos,r,nx,ny,color);
 			newPaopao.SetBitmapID(IDB_BITMAP1);
+
+			int nRandID = rand() % 11 + IDB_PNG1;
+			newPaopao.SetPngID(nRandID);
 			//int dx = (xPos - rc.CenterPoint().x);
 			//int dy = (rc.CenterPoint().y - yPos);//折合成坐标 
  
@@ -314,7 +329,10 @@ void CMyPaopaoDlg::AddRandPaopao(CPoint point, int nNumOfPaopao){
 
 			COLORREF color=RGB(rand()%255,rand()%255,rand()%255);
 			CPaopao newPaopao(xPos,yPos,r,nx,ny,color);
+
 			newPaopao.SetBitmapID(IDB_BITMAP1);
+			int nRandID = rand() % 11 + IDB_PNG1;
+			newPaopao.SetPngID(nRandID);
 
 			//int dx = (xPos - rc.CenterPoint().x);
 			//int dy = (rc.CenterPoint().y - yPos);//折合成坐标 
@@ -562,3 +580,51 @@ void CMyPaopaoDlg::OnRandCrashSport()
 	// TODO:  在此添加命令处理程序代码
 	nSportStyle = 3;
 }
+void CMyPaopaoDlg::SetDlgTransparent(HWND hWnd, COLORREF color)
+{
+	LONG t = GetWindowLong(hWnd, GWL_EXSTYLE);
+	t |= WS_EX_LAYERED;
+	SetWindowLong(hWnd, GWL_EXSTYLE, t);
+
+	::SetLayeredWindowAttributes(hWnd, color, 0, LWA_COLORKEY); // 120是透明度，范围是0～255  LWA_ALPHA 
+}
+
+void CMyPaopaoDlg::OnShowpng()
+{
+	// TODO:  在此添加命令处理程序代码
+
+
+	nDrawStyle = 3;
+	Invalidate();
+}
+
+//背景透明
+void CMyPaopaoDlg::OnTransbg()
+{
+	// TODO:  在此添加命令处理程序代码
+
+	if (!bTranBg){
+
+		LONG t = GetWindowLong(m_hWnd, GWL_EXSTYLE);
+		t |= WS_EX_LAYERED;
+		SetWindowLong(m_hWnd, GWL_EXSTYLE, t);
+		SetDlgTransparent(m_hWnd, RGB(0, 0, 0));
+
+		bTranBg = TRUE;
+	}
+	else{
+		LONG t = GetWindowLong(m_hWnd, GWL_EXSTYLE);
+		t &= ~WS_EX_LAYERED;
+		SetWindowLong(m_hWnd, GWL_EXSTYLE, t);
+
+		bTranBg = FALSE;
+	}
+	
+
+
+
+
+}
+
+
+

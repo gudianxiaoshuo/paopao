@@ -165,6 +165,17 @@
   </ItemGroup>
   <ItemGroup>
     <Image Include="res\0.bmp" />
+    <Image Include="res\03.png" />
+    <Image Include="res\102.png" />
+    <Image Include="res\11.png" />
+    <Image Include="res\12.png" />
+    <Image Include="res\16.png" />
+    <Image Include="res\28.png" />
+    <Image Include="res\30.png" />
+    <Image Include="res\33.png" />
+    <Image Include="res\65.png" />
+    <Image Include="res\72.png" />
+    <Image Include="res\74.png" />
     <Image Include="res\myPaopao.ico" />
   </ItemGroup>
   <ItemGroup>

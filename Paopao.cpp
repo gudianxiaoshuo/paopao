@@ -2,6 +2,49 @@
 #include "Paopao.h"
 
 
+BOOL LoadImageFromResource(CImage *pImage, UINT nResID, LPCTSTR lpTyp)
+{
+	if (pImage == NULL)
+		return false;
+	pImage->Destroy();
+	// 查找资源
+	HRSRC hRsrc = ::FindResource(AfxGetResourceHandle(), MAKEINTRESOURCE(nResID), lpTyp);
+	if (hRsrc == NULL)
+		return false;
+	// 加载资源
+	HGLOBAL hImgData = ::LoadResource(AfxGetResourceHandle(), hRsrc);
+	if (hImgData == NULL)
+	{
+		::FreeResource(hImgData);
+		return false;
+	}
+	// 锁定内存中的指定资源
+	LPVOID lpVoid = ::LockResource(hImgData);
+	LPSTREAM pStream = NULL;
+	DWORD dwSize = ::SizeofResource(AfxGetResourceHandle(), hRsrc);
+	HGLOBAL hNew = ::GlobalAlloc(GHND, dwSize);
+	LPBYTE lpByte = (LPBYTE)::GlobalLock(hNew);
+	::memcpy(lpByte, lpVoid, dwSize);
+	// 解除内存中的指定资源
+	::GlobalUnlock(hNew);
+	// 从指定内存创建流对象
+	HRESULT ht = ::CreateStreamOnHGlobal(hNew, TRUE, &pStream);
+	if (ht != S_OK)
+	{
+		GlobalFree(hNew);
+	}
+	else
+	{
+		// 加载图片
+		pImage->Load(pStream);
+		GlobalFree(hNew);
+	}
+	// 释放资源
+	::FreeResource(hImgData);
+	return true;
+}
+
+
 CPaopao::CPaopao()
 {	
       nx=0;
@@ -24,6 +67,10 @@ CPaopao::CPaopao(int xPos,int yPos, int r,int nx,int ny,COLORREF color){
 	  this->ny=ny;
 	  this->color=color;
    }
+
+void CPaopao::SetPngID(short nPngID){
+	nIdOfPng = nPngID;
+}
 
 void CPaopao::SetBitmapID(short nBitmapID){
 
@@ -71,12 +118,47 @@ void CPaopao::SetBitmapID(short nBitmapID){
 			 BITMAP bmpInfo;
 			 bmp.GetBitmap(&bmpInfo);
              
-		//	 dc.BitBlt(rc.left,rc.top,rc.Width(),rc.Height(),&memDC,0,0,SRCCOPY);
-			 dc.StretchBlt(rc.left, rc.top, rc.Width(), rc.Height(), &memDC, 0, 0, bmpInfo.bmWidth, bmpInfo.bmHeight, NOTSRCCOPY);
+			 dc.BitBlt(rc.left,rc.top,rc.Width(),rc.Height(),&memDC,0,0,SRCCOPY);
+			// dc.StretchBlt(rc.left, rc.top, rc.Width(), rc.Height(), &memDC, 0, 0, bmpInfo.bmWidth, bmpInfo.bmHeight, NOTSRCCOPY);
 		//	TransparentBlt(dc.GetSafeHdc(),rc.left,rc.top,rc.Width(),rc.Height(),memDC.GetSafeHdc(),0,0,bmpInfo.bmWidth,bmpInfo.bmHeight,RGB(255, 255, 255));
 
 		   }
 		   break;
+
+	   case 3:
+	   {
+				 CImage Image;
+
+				 LoadImageFromResource(&Image, nIdOfPng, _T("PNG"));
+				 if (Image.IsNull())
+				 {
+					 return;
+				 }
+				 if (Image.GetBPP() == 32) //确认该图像包含Alpha通道
+				 {
+					 int i;
+					 int j;
+					 for (i = 0; i<Image.GetWidth(); i++)
+					 {
+						 for (j = 0; j<Image.GetHeight(); j++)
+						 {
+							 byte *pByte = (byte *)Image.GetPixelAddress(i, j);
+							 pByte[0] = pByte[0] * pByte[3] / 255;
+							 pByte[1] = pByte[1] * pByte[3] / 255;
+							 pByte[2] = pByte[2] * pByte[3] / 255;
+						 }
+					 }
+				 }
+				 Image.Draw(dc.GetSafeHdc(), rc.left, rc.top, rc.Width(), rc.Height());
+				 Image.Destroy();
+				
+
+
+	   }
+
+		   break;
+
+
 	   }
 
 
@@ -109,17 +191,23 @@ void CPaopao::SetBitmapID(short nBitmapID){
 
    }
 
+   void CPaopao::MoveTo(int x, int y){
+
+	   CPoint ptPaoPaoCenter = GetCenter();
+	   rc.OffsetRect(x - ptPaoPaoCenter.x, y - ptPaoPaoCenter.y);
+   }
+
    void CPaopao::RunSin(CRect clientRc, float fStartAngle, float fEndAngle)//正弦运动
    {
 	  
 	   CPoint ptCenter = clientRc.CenterPoint();
-	   CPoint ptPaoPaoCenter = rc.CenterPoint();
+	   CPoint ptPaoPaoCenter = GetCenter();
 
 	   //   int nRadius =Distance(ptCenter, ptPaoPaoCenter);
 	   long x = ptCenter.x + rRadius*cos(fAngle);
 	   long y = ptCenter.y - rRadius*sin(fAngle);//折合成坐标  
 
-	   rc.OffsetRect( x-ptPaoPaoCenter.x,  y-ptPaoPaoCenter.y);
+	   MoveTo(x,y);
 
 	   if (bAdd)
 		   fAngle += 0.1;

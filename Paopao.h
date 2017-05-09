@@ -25,15 +25,21 @@ public:
 
 
    short nIdOfBitmap;
+   short nIdOfPng;
 
 public:
    void SetBitmapID(short nBitmapID);
+   void SetPngID(short nPngID);
    void Draw(CDC &dc,int nDrawStyle=0,BOOL bPransparent=TRUE);
 
    void Run(CRect clientRc);
    void RunCircle(CRect clientRc);//圆形运动
    void RunSin(CRect clientRc,float fStartAngle,float fEndAngle);//正弦运动
 
+
+
+
+   void MoveTo(int x, int y);
 
    float GetAngle(CPoint centerPoint, CPoint pt);
    CPoint GetCenter() const ;
@@ -49,5 +55,9 @@ public:
 
    BOOL bCrash(const CPaopao &ortherPaopao)const ;
    void Crash(CPaopao &ortherPaopao);
+
+
+
+  
 };
 

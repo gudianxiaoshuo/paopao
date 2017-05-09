@@ -12,7 +12,12 @@
 // CMyPaopaoDlg dialog
 
 #include "Paopao.h"
-#define NUMOFPAOPAO 66
+#define NUMOFPAOPAO 100
+
+#define Rand_Sport 0
+#define Circle_Sport 1
+#define Arc_Sort 2
+#define Crash_Sort 3
 
 class CMyPaopaoDlg : public CDialog
 {
@@ -43,14 +48,18 @@ public:
 
 	short nSportStyle; //运动方式 0 随机 1 环绕
 	short nDrawStyle;  //绘图样式  0 圆形  1 正方形 2 图片 
-	BOOL bTransparent;
+	BOOL bTransparent; //图像透明 空刷子填充
+
+	BOOL bTranBg;//背景透明
 
 
 	CDC dcMem;
 	CBitmap bmp;
 	void CreateBmpAndDC();
 
-// Implementation
+public:
+	void SetDlgTransparent(HWND hWnd, COLORREF color = RGB(10, 10, 10));
+
 protected:
 	HICON m_hIcon;
 
@@ -79,6 +88,9 @@ public:
 	afx_msg void OnHuanraoSport();
 	afx_msg void OnArcSport();
 	afx_msg void OnRandCrashSport();
+	afx_msg void OnShowpng();
+	afx_msg void OnTransbg();
+
 };
 
 //{{AFX_INSERT_LOCATION}}

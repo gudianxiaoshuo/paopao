@@ -171,11 +171,14 @@ IDR_MENU1 MENU
 BEGIN
     POPUP "ÓÒ¼ü²Ëµ¥"
     BEGIN
-        MENUITEM "Í¸Ã÷",                          ID_TRANSPARENT
+        MENUITEM "±³¾°Í¸Ã÷",                        ID_TRANSBG
         MENUITEM SEPARATOR
+        MENUITEM "Í¼ÏñÍ¸Ã÷",                        ID_TRANSPARENT
         MENUITEM "Ô²ÐÎ",                          ID_ELLIPSE
         MENUITEM "Õý·½ÐÎ",                         ID_RECT
-        MENUITEM "Í¼Æ¬",                          ID_IMG
+        MENUITEM SEPARATOR
+        MENUITEM "BMPÍ¼Æ¬",                       ID_IMG
+        MENUITEM "PNGÍ¼Æ¬",                       ID_SHOWPNG
         MENUITEM SEPARATOR
         MENUITEM "Ëæ»úÔË¶¯",                        ID_RAND_SPORT
         MENUITEM "Ëæ»úÅö×²",                        ID_RAND_CRASH_SPORT
@@ -185,6 +188,23 @@ BEGIN
     END
 END
 
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// PNG
+//
+
+IDB_PNG1                PNG                     "res\\72.png"
+IDB_PNG2                PNG                     "res\\03.png"
+IDB_PNG3                PNG                     "res\\11.png"
+IDB_PNG4                PNG                     "res\\12.png"
+IDB_PNG5                PNG                     "res\\16.png"
+IDB_PNG6                PNG                     "res\\28.png"
+IDB_PNG7                PNG                     "res\\30.png"
+IDB_PNG8                PNG                     "res\\33.png"
+IDB_PNG9                PNG                     "res\\65.png"
+IDB_PNG10               PNG                     "res\\74.png"
+IDB_PNG11               PNG                     "res\\102.png"
 
 /////////////////////////////////////////////////////////////////////////////
 //

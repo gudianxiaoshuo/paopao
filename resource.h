@@ -9,6 +9,17 @@
 #define IDR_MAINFRAME                   128
 #define IDB_BITMAP1                     129
 #define IDR_MENU1                       130
+#define IDB_PNG1                        131
+#define IDB_PNG2                        132
+#define IDB_PNG3                        133
+#define IDB_PNG4                        134
+#define IDB_PNG5                        135
+#define IDB_PNG6                        136
+#define IDB_PNG7                        137
+#define IDB_PNG8                        138
+#define IDB_PNG9                        139
+#define IDB_PNG10                       140
+#define IDB_PNG11                       141
 #define ID_32771                        32771
 #define ID_32772                        32772
 #define ID_32773                        32773
@@ -28,13 +39,17 @@
 #define ID_ARC_SPORT                    32787
 #define ID_32788                        32788
 #define ID_RAND_CRASH_SPORT             32789
+#define ID_32790                        32790
+#define ID_SHOWPNG                      32791
+#define ID_32792                        32792
+#define ID_TRANSBG                      32793
 
 // Next default values for new objects
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        131
-#define _APS_NEXT_COMMAND_VALUE         32790
+#define _APS_NEXT_RESOURCE_VALUE        142
+#define _APS_NEXT_COMMAND_VALUE         32794
 #define _APS_NEXT_CONTROL_VALUE         1000
 #define _APS_NEXT_SYMED_VALUE           101
 #endif
